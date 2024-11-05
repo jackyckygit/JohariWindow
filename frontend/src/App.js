@@ -6,6 +6,8 @@ import PeerAssessment from './components/PeerAssessment';
 import JohariResults from './components/JohariResults';
 import LoadingScreen from './components/LoadingScreen';
 import UserInfoPopup from './components/UserInfoPopup';
+import JohariWindowLogo from './images/logo192.png';
+
 
 function App() {
   const [stage, setStage] = useState('userInfo');
@@ -108,9 +110,9 @@ function App() {
       <header className="header">
         <div className="container">
           <div className="header-content">
-            {/* <img src={greatLakesLogo} alt="Great Lakes Logo" className="great-lakes-logo" /> */}
+            <img src={JohariWindowLogo} alt="Johari Window Logo" className="window-logo" />
             <h1>周哈里窗</h1>
-            <h2>Welcome, {name} in group {group}</h2>
+            {name!='' && <h2>Welcome, {name} in group {group}</h2>}
           </div>
         </div>
       </header>

@@ -79,13 +79,13 @@ const JohariWindow = ({ name, adjectives, minAdj, maxAdj, onSubmit }) => {
         displayAlert(`Error: ${error.message}`);
       }
     }
-
-    const displayAlert = (nessage)=>{
-      setAlert({
-        open: true, message, severity: "error"
-      })
-    }
   };
+
+  const displayAlert = (message)=>{
+    setAlert({
+      open: true, message, severity: "error"
+    })
+  }
 
   return (
     <div className="container">

@@ -273,7 +273,7 @@ h1, h2, h3 {
     align-items: flex-start;
   }
 
-  .great-lakes-logo {
+  .window-logo {
     margin-bottom: 10px;
   }
 
@@ -326,7 +326,7 @@ h1, h2, h3 {
   /* margin-bottom: 20px; */
 }
 
-.great-lakes-logo {
+.window-logo {
   max-height: 80px;
   margin-right: 20px;
 }
