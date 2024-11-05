@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Snackbar } from '@mui/material';
 import Alert from '@mui/material/Alert';
-import QRCode from 'qrcode.react';
 import '../styles/GreatLakesTheme.css';
 
 const PeerAssessment = ({ name, minAdj, maxAdj , group, adjectives, onSubmit, userName, onNavigate }) => {
@@ -11,9 +10,6 @@ const PeerAssessment = ({ name, minAdj, maxAdj , group, adjectives, onSubmit, us
   const [peerName, setPeerName] = useState('');
   const [peerEmail, setPeerEmail] = useState('');
   const [peerList, setPeerList] = useState([]);
-  const [generateQR, setGenerateQR] = useState(false);
-  const [showQRCode, setShowQRCode] = useState(false);
-  const [qrCodeData, setQRCodeData] = useState('');
   const [alert, setAlert] = useState({ open: false, message: "", severity: null})
 
   useEffect(() => {
@@ -117,8 +113,6 @@ const PeerAssessment = ({ name, minAdj, maxAdj , group, adjectives, onSubmit, us
         setAlert({
           open: true, message: "Submitted successfully", severity: "success"
         })
-        // onNavigate('/johari-window');//TODO the window location seem to be unchanged
-        // don't go to result
       } else {
         setAlert({
           open: true, message: response.data.message, severity: "error"
@@ -135,14 +129,6 @@ const PeerAssessment = ({ name, minAdj, maxAdj , group, adjectives, onSubmit, us
   const handleRefreshPeer = async () => {
     updatePeers()
   };
-
-  useEffect(() => {
-    if (generateQR) {
-      handleGenerateQR();
-    } else {
-      setShowQRCode(false);
-    }
-  }, [generateQR]);
 
   return (
     <div className="container">
@@ -224,16 +210,6 @@ const PeerAssessment = ({ name, minAdj, maxAdj , group, adjectives, onSubmit, us
           Submit
         </button>
       </form>
-      {showQRCode && (
-        <div className="qr-popup">
-          <div className="qr-content">
-            <h3>QR Code for Peer Assessment</h3>
-            <QRCode value={qrCodeData} size={256} />
-            <p>Scan this QR code to access the peer assessment.</p>
-            <button onClick={() => setShowQRCode(false)}>Close</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
