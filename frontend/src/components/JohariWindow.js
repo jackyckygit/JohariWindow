@@ -45,7 +45,7 @@ const JohariWindow = ({ name, adjectives, minAdj, maxAdj, onSubmit }) => {
       } else if (maxAdj && prev.length < maxAdj) {
         return [...prev, adjective];
       } else {
-        setAlert(`Maximum allowed is ${maxAdj} adjectives. Please uncheck one to select a new adjective.`);
+        displayAlert(`Maximum allowed is ${maxAdj} adjectives. Please uncheck one to select a new adjective.`);
         return prev;
       }
     });
@@ -54,7 +54,7 @@ const JohariWindow = ({ name, adjectives, minAdj, maxAdj, onSubmit }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (selectedAdjectives.length < minAdj) { 
-      setAlert(`Please select at least ${minAdj} adjectives.`);
+      displayAlert(`Please select at least ${minAdj} adjectives.`);
       return;
     }
     try {
@@ -67,16 +67,16 @@ const JohariWindow = ({ name, adjectives, minAdj, maxAdj, onSubmit }) => {
       if (response.data.success) {
         onSubmit(selectedAdjectives);
       } else {
-        setAlert(`Error: ${response.data.message}`);
+        displayAlert(`Error: ${response.data.message}`);
       }
     } catch (error) {
       console.error('Error submitting assessment:', error);
       if (error.response) {
-        setAlert(`Error: ${error.response.data.message || 'Unknown server error'}`);
+        displayAlert(`Error: ${error.response.data.message || 'Unknown server error'}`);
       } else if (error.request) {
-        setAlert('Error: No response received from the server');
+        displayAlert('Error: No response received from the server');
       } else {
-        setAlert(`Error: ${error.message}`);
+        displayAlert(`Error: ${error.message}`);
       }
     }
 
