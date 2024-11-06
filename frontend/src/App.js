@@ -70,7 +70,7 @@ function App() {
 
   const handleSelfAssessmentSubmit = (adjectives) => {
     setSelfAdjectives(adjectives);
-    setStage('peerAssessment');
+    // setStage('peerAssessment');
   };
 
   const handlePeerAssessmentSubmit = (peerAssessment) => {

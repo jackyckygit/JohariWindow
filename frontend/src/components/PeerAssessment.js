@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Snackbar } from '@mui/material';
+import { Snackbar, IconButton } from '@mui/material';
 import Alert from '@mui/material/Alert';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import '../styles/GreatLakesTheme.css';
 
 const PeerAssessment = ({ name, minAdj, maxAdj , group, adjectives, onSubmit, userName, onNavigate }) => {
@@ -139,7 +140,11 @@ const PeerAssessment = ({ name, minAdj, maxAdj , group, adjectives, onSubmit, us
 
   return (
     <div className="container">
-      <h2>選擇要評估的友伴</h2>
+      <h2 className='tab-title'>選擇要評估的友伴
+        <IconButton aria-label="refresh" size='large' color='secondary' onClick={handleRefreshPeer}>
+          <RefreshIcon fontSize="inherit"/>
+        </IconButton>
+      </h2>
       <div className="peer-list">
         {peerList.map(peer => (
           <button
@@ -152,15 +157,14 @@ const PeerAssessment = ({ name, minAdj, maxAdj , group, adjectives, onSubmit, us
           </button>
         ))}
       </div>
-
-      <div className="refresh-btn">
+      {/* <div className="refresh-btn">
         <button 
           onClick={handleRefreshPeer} 
-          className="send-to-peer-btn"
+          className="refresh-peer-btn"
         >
           刷新友伴
         </button>
-      </div>
+      </div> */}
       {
         peerName && <div>
         {
@@ -172,15 +176,39 @@ const PeerAssessment = ({ name, minAdj, maxAdj , group, adjectives, onSubmit, us
         }
         </div>
       }
-      <div className="progress-bar">
-        <div 
-          className="progress" 
-          style={{
-            width: `${progress}%`,
-            backgroundColor: getProgressColor(progress)
-          }}
-        ></div>
-      </div>
+      {
+        peerName && (<>
+          <div className="progress-bar">
+            <div
+              className="progress"
+              style={{
+                width: `${progress}%`,
+                backgroundColor: getProgressColor(progress)
+              }}
+            ></div>
+          </div>
+          <form onSubmit={handleSubmit}>
+            <div className="adjective-grid">
+              {adjectives.map(adjective => (
+                <button
+                  key={adjective}
+                  type="button"
+                  className={`adjective-btn ${selectedAdjectives.includes(adjective) ? 'selected' : ''}`}
+                  onClick={() => handleAdjectiveToggle(adjective)}
+                >
+                  {adjective}
+                </button>
+              ))}
+            </div>
+            <button
+              className="btn submit-btn"
+              type="submit"
+              disabled={selectedAdjectives.length < minAdj || !peerName.trim()}
+            >Submit
+            </button>
+          </form>
+        </>)
+      }
       <Snackbar
         anchorOrigin={{
           vertical: 'bottom',
@@ -196,27 +224,6 @@ const PeerAssessment = ({ name, minAdj, maxAdj , group, adjectives, onSubmit, us
           </Alert>
         </div>
       </Snackbar>
-      <form onSubmit={handleSubmit}>
-        <div className="adjective-grid">
-          {adjectives.map(adjective => (
-            <button
-              key={adjective}
-              type="button"
-              className={`adjective-btn ${selectedAdjectives.includes(adjective) ? 'selected' : ''}`}
-              onClick={() => handleAdjectiveToggle(adjective)}
-            >
-              {adjective}
-            </button>
-          ))}
-        </div>
-        <button 
-          className="btn submit-btn" 
-          type="submit" 
-          disabled={selectedAdjectives.length < minAdj || !peerName.trim()}
-        >
-          Submit
-        </button>
-      </form>
     </div>
   );
 };

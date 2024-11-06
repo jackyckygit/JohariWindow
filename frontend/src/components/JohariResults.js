@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/GreatLakesTheme.css';
+import { IconButton } from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 const JohariResults = ({ name, adjectives }) => {
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
@@ -100,7 +102,11 @@ const JohariResults = ({ name, adjectives }) => {
     <div className="johari-results">
       <div className="johari-container">
         <div className="johari-window">
-          <h2>根據以下友伴，這是你的周哈里窗</h2>
+          <h2 className='tab-title'>根據以下友伴，這是你的周哈里窗
+            <IconButton aria-label="refresh" size='large' color='secondary' onClick={handleRefreshPeer}>
+              <RefreshIcon fontSize="inherit"/>
+            </IconButton>
+          </h2>
           <div className="peer-list">
             {peerAssessments.map(peer => (
               <button
@@ -111,14 +117,6 @@ const JohariResults = ({ name, adjectives }) => {
                 {peer.peerName}
               </button>
             ))}
-          </div>
-          <div className="refresh-btn">
-            <button 
-              onClick={handleRefreshPeer} 
-              className="send-to-peer-btn"
-            >
-              刷新友伴
-            </button>
           </div>
           <div className="johari-grid">
             <div className="johari-quadrant">

@@ -66,6 +66,7 @@ const JohariWindow = ({ name, adjectives, minAdj, maxAdj, onSubmit }) => {
       
       if (response.data.success) {
         onSubmit(selectedAdjectives);
+        displaySuccess('Submitted successfully')
       } else {
         displayAlert(`Error: ${response.data.message}`);
       }
@@ -84,6 +85,11 @@ const JohariWindow = ({ name, adjectives, minAdj, maxAdj, onSubmit }) => {
   const displayAlert = (message)=>{
     setAlert({
       open: true, message, severity: "error"
+    })
+  }
+  const displaySuccess = (message)=>{
+    setAlert({
+      open: true, message, severity: "success"
     })
   }
 
