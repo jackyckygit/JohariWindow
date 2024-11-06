@@ -178,9 +178,9 @@ function App() {
               selfAdjectives={selfAdjectives} 
               peerAssessments={peerAssessments}
             />
-            <button onClick={() => setStage('downloadReport')} className="btn">
+            {/* <button onClick={() => setStage('downloadReport')} className="btn">
               Download Full Report
-            </button>
+            </button> */}
           </>
         )}
         {stage === 'downloadReport' && (

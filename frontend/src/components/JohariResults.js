@@ -140,7 +140,7 @@ const JohariResults = ({ name, adjectives }) => {
           </div>
         </div>
       </div>
-      <button onClick={() => setShowDownloadPopup(true)} className="download-report-btn">Download Full Report</button>
+      {/* <button onClick={() => setShowDownloadPopup(true)} className="download-report-btn">Download Full Report</button> */}
       {showDownloadPopup && (
         <div className="download-popup">
           <h3>Enter your details to receive the report</h3>
