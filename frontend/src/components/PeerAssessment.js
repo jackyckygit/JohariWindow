@@ -41,18 +41,25 @@ const PeerAssessment = ({ name, minAdj, maxAdj , group, adjectives, onSubmit, us
   };
 
   const handleAdjectiveToggle = (adjective) => {
-    setSelectedAdjectives(prev => {
-      if (prev.includes(adjective)) {
-        return prev.filter(a => a !== adjective);
-      } else if (maxAdj && prev.length < maxAdj) {
-        return [...prev, adjective];
-      } else {
-        setAlert({
-          open: true, message: `Maximum allowed is ${maxAdj} adjectives. Please uncheck one to select a new adjective.`, severity: "error"
-        })
-        return prev;
-      }
-    });
+    if (peerName==''){
+      setAlert({
+        open: true, message: `Please select a peer first`, severity: "error"
+      })
+    }
+    else {
+      setSelectedAdjectives(prev => {
+        if (prev.includes(adjective)) {
+          return prev.filter(a => a !== adjective);
+        } else if (maxAdj && prev.length < maxAdj) {
+          return [...prev, adjective];
+        } else {
+          setAlert({
+            open: true, message: `Maximum allowed is ${maxAdj} adjectives. Please uncheck one to select a new adjective.`, severity: "error"
+          })
+          return prev;
+        }
+      });
+    }
   };
 
   const handleSelectedPeer = (pn) => {
