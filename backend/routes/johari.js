@@ -87,10 +87,25 @@ router.post('/submit-self', async (req, res) => {
   }
 
   console.log('Received self-assessment:', { adjectives });
-  if (!Array.isArray(adjectives) || adjectives.length < process.env.MIN_NUM_OF_ADJ || adjectives.length > process.env.MAX_NUM_OF_ADJ) {
+  // testing different value of MAX_NUM_OF_SELF_ADJ and with and adjectives.length is > MAX_NUM_OF_SELF_ADJ
+  // MAX_NUM_OF_SELF_ADJ not defined
+  // MAX_NUM_OF_SELF_ADJ = ''
+  // MAX_NUM_OF_SELF_ADJ = existing value in env and adjectives.length is > MAX_NUM_OF_SELF_ADJ
+  if (!Array.isArray(adjectives) 
+    || adjectives.length < process.env.MIN_NUM_OF_SELF_ADJ 
+    || (process.env.MAX_NUM_OF_SELF_ADJ && process.env.MAX_NUM_OF_SELF_ADJ!='' && (adjectives.length > process.env.MAX_NUM_OF_SELF_ADJ)) 
+  ){
+    let message;
+    if (process.env.MAX_NUM_OF_SELF_ADJ && process.env.MAX_NUM_OF_SELF_ADJ!=''){
+      message = `Please select ${process.env.MIN_NUM_OF_SELF_ADJ}-${process.env.MAX_NUM_OF_SELF_ADJ} adjectives.`;
+    }
+    else {
+      //MAX_NUM_OF_SELF_ADJ is not defined
+      message = `Please select more than ${process.env.MIN_NUM_OF_SELF_ADJ} adjectives.`
+    }
     return res.status(400).json({ 
       success: false, 
-      message: `Please select ${process.env.MIN_NUM_OF_ADJ}-${process.env.MAX_NUM_OF_ADJ} adjectives.` 
+      message
     });
   }
 
@@ -122,11 +137,20 @@ router.post('/submit-peer', async (req, res) => {
   const { userName, peerName, group, peerEmail, adjectives } = req.body;
   
   console.log('Received peer assessment:', { userName, peerName, group, peerEmail, adjectives });
+  let not_defined_max = process.env.MAX_NUM_OF_PEER_ADJ == null || process.env.MAX_NUM_OF_PEER_ADJ == ''
 
-  if (!userName || !peerName || !Array.isArray(adjectives) || adjectives.length < process.env.MIN_NUM_OF_ADJ || adjectives.length > process.env.MAX_NUM_OF_ADJ) {
+  if (!userName || !peerName || !Array.isArray(adjectives) || adjectives.length < process.env.MIN_NUM_OF_PEER_ADJ || (!not_defined_max && adjectives.length > process.env.MAX_NUM_OF_PEER_ADJ)) {
+    let message;
+    if (!not_defined_max){
+      message = `Please select ${process.env.MIN_NUM_OF_PEER_ADJ}-${process.env.MAX_NUM_OF_PEER_ADJ} adjectives.`;
+    }
+    else {
+      //MAX_NUM_OF_PEER_ADJ is not defined
+      message = `Please select more than ${process.env.MIN_NUM_OF_SELF_ADJ} adjectives.`
+    }
     return res.status(400).json({ 
       success: false, 
-      message: `Invalid data provided. Please ensure all fields are filled and ${process.env.MIN_NUM_OF_ADJ}-${process.env.MAX_NUM_OF_ADJ} adjectives are selected.` 
+      message 
     });
   }
 
@@ -218,8 +242,10 @@ router.get('/window/:userName', async (req, res) => {
 
 router.get('/config', async (req, res) => {
   try {
-    const MIN_NUM_OF_ADJ = process.env.MIN_NUM_OF_ADJ;
-    const MAX_NUM_OF_ADJ = process.env.MAX_NUM_OF_ADJ;
+    const MIN_NUM_OF_PEER_ADJ = process.env.MIN_NUM_OF_PEER_ADJ;
+    const MAX_NUM_OF_PEER_ADJ = process.env.MAX_NUM_OF_PEER_ADJ;
+    const MIN_NUM_OF_SELF_ADJ = process.env.MIN_NUM_OF_SELF_ADJ;
+    const MAX_NUM_OF_SELF_ADJ = process.env.MAX_NUM_OF_SELF_ADJ;
     const lines = await readFileLineByLine(process.env.ADJ_FILE);
     if (!lines) {
       return res.status(404).json({ success: false, message: 'Adjectives not found' });
@@ -228,8 +254,10 @@ router.get('/config', async (req, res) => {
       success: true,
       data: {
         adjectives: lines,
-        minAdj:  MIN_NUM_OF_ADJ, 
-        maxAdj:  MAX_NUM_OF_ADJ
+        minPeerAdj:  MIN_NUM_OF_PEER_ADJ, 
+        maxPeerAdj:  MAX_NUM_OF_PEER_ADJ,
+        minSelfAdj:  MIN_NUM_OF_SELF_ADJ, 
+        maxSelfAdj:  MAX_NUM_OF_SELF_ADJ,
       }
     });
   } catch (err) {

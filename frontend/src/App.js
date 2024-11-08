@@ -16,8 +16,10 @@ function App() {
   const [phone, setPhone] = useState('');
   const [group, setGroup] = useState('');
   const [adjectives, setAdjectives] = useState([]);
-  const [minAdj, setMinAdj] = useState()
-  const [maxAdj, setMaxAdj] = useState()
+  const [minPeerAdj, setMinPeerAdj] = useState()
+  const [maxPeerAdj, setMaxPeerAdj] = useState()
+  const [minSelfAdj, setMinSelfAdj] = useState()
+  const [maxSelfAdj, setMaxSelfAdj] = useState()
   const [selfAdjectives, setSelfAdjectives] = useState([]);
   const [peerAssessments, setPeerAssessments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -26,8 +28,10 @@ function App() {
     try {
       axios.get('/jw-api/johari/config').then((res)=>{
         setAdjectives(res.data?.data?.adjectives || [])
-        setMinAdj(res.data?.data?.minAdj)
-        setMaxAdj(res.data?.data?.maxAdj)
+        setMinSelfAdj(res.data?.data?.minSelfAdj)
+        setMaxSelfAdj(res.data?.data?.maxSelfAdj)
+        setMinPeerAdj(res.data?.data?.minPeerAdj)
+        setMaxPeerAdj(res.data?.data?.maxPeerAdj)
         setIsLoading(false)
       }).catch((err)=>{
         console.error('Error getting adjectives', err);
@@ -150,8 +154,8 @@ function App() {
             // email={email} 
             phone={phone} 
             adjectives={adjectives}
-            minAdj={minAdj}
-            maxAdj={maxAdj}
+            minSelfAdj={minSelfAdj}
+            maxSelfAdj={maxSelfAdj}
           />
         )}
         {stage === 'peerAssessment' && (
@@ -162,8 +166,8 @@ function App() {
             // email={email} 
             group={group}
             adjectives={adjectives}
-            minAdj={minAdj}
-            maxAdj={maxAdj}
+            minPeerAdj={minPeerAdj}
+            maxPeerAdj={maxPeerAdj}
             onNavigate={handleNavigate}
           />
         )}
@@ -173,8 +177,6 @@ function App() {
               name={name} 
               // email={email} 
               adjectives={adjectives}
-              minAdj={minAdj}
-              maxAdj={maxAdj}
               selfAdjectives={selfAdjectives} 
               peerAssessments={peerAssessments}
             />

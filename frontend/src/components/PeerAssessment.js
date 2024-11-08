@@ -5,7 +5,7 @@ import Alert from '@mui/material/Alert';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import '../styles/GreatLakesTheme.css';
 
-const PeerAssessment = ({ name, minAdj, maxAdj , group, adjectives, onSubmit, userName, onNavigate }) => {
+const PeerAssessment = ({ name, minPeerAdj, maxPeerAdj , group, adjectives, onSubmit, userName, onNavigate }) => {
   const [selectedAdjectives, setSelectedAdjectives] = useState([]);
   const [progress, setProgress] = useState(0);
   const [peerName, setPeerName] = useState('');
@@ -14,7 +14,7 @@ const PeerAssessment = ({ name, minAdj, maxAdj , group, adjectives, onSubmit, us
   const [alert, setAlert] = useState({ open: false, message: "", severity: null})
 
   useEffect(() => {
-    setProgress((selectedAdjectives.length / minAdj) * 100);
+    setProgress((selectedAdjectives.length / minPeerAdj) * 100);
   }, [selectedAdjectives]);
 
   useEffect(() => {
@@ -51,11 +51,11 @@ const PeerAssessment = ({ name, minAdj, maxAdj , group, adjectives, onSubmit, us
       setSelectedAdjectives(prev => {
         if (prev.includes(adjective)) {
           return prev.filter(a => a !== adjective);
-        } else if (maxAdj && prev.length < maxAdj) {
+        } else if (maxPeerAdj == undefined || prev.length < maxPeerAdj) {
           return [...prev, adjective];
         } else {
           setAlert({
-            open: true, message: `Maximum allowed is ${maxAdj} adjectives. Please uncheck one to select a new adjective.`, severity: "error"
+            open: true, message: `Maximum allowed is ${maxPeerAdj} adjectives. Please uncheck one to select a new adjective.`, severity: "error"
           })
           return prev;
         }
@@ -90,18 +90,18 @@ const PeerAssessment = ({ name, minAdj, maxAdj , group, adjectives, onSubmit, us
       })
       return;
     }
-    if (maxAdj){
-      if (selectedAdjectives.length < minAdj || selectedAdjectives.length > maxAdj) {
+    if (maxPeerAdj){
+      if (selectedAdjectives.length < minPeerAdj || selectedAdjectives.length > maxPeerAdj) {
         setAlert({
-          open: true, message: `Please select ${minAdj}-${maxAdj} adjectives.`, severity: "error"
+          open: true, message: `Please select ${minPeerAdj}-${maxPeerAdj} adjectives.`, severity: "error"
         })
         return;
       }
     }
     else {
-      if (selectedAdjectives.length < minAdj) {
+      if (selectedAdjectives.length < minPeerAdj) {
         setAlert({
-          open: true, message: `Please select at least ${minAdj} adjectives.`, severity: "error"
+          open: true, message: `Please select at least ${minPeerAdj} adjectives.`, severity: "error"
         })
         return;
       }
@@ -168,10 +168,10 @@ const PeerAssessment = ({ name, minAdj, maxAdj , group, adjectives, onSubmit, us
       {
         peerName && <div>
         {
-          (maxAdj)? (
-            <h2>請選出{minAdj}-{maxAdj}個{peerName}的特質</h2>
+          (maxPeerAdj)? (
+            <h2>請選出{minPeerAdj}-{maxPeerAdj}個{peerName}的特質</h2>
           ):(
-            <h2>請選出最少{minAdj}個{peerName}的特質</h2>
+            <h2>請選出最少{minPeerAdj}個{peerName}的特質</h2>
           )
         }
         </div>
@@ -203,7 +203,7 @@ const PeerAssessment = ({ name, minAdj, maxAdj , group, adjectives, onSubmit, us
             <button
               className="btn submit-btn"
               type="submit"
-              disabled={selectedAdjectives.length < minAdj || !peerName.trim()}
+              disabled={selectedAdjectives.length < minPeerAdj || !peerName.trim()}
             >Submit
             </button>
           </form>

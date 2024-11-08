@@ -4,7 +4,7 @@ import { Snackbar } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import '../styles/GreatLakesTheme.css';
 
-const JohariWindow = ({ name, adjectives, minAdj, maxAdj, onSubmit }) => {
+const JohariWindow = ({ name, adjectives, minSelfAdj, maxSelfAdj, onSubmit }) => {
   const [selectedAdjectives, setSelectedAdjectives] = useState([]); 
   // const [selfAssessment, setSelfAssessment] = useState([]);
 
@@ -12,7 +12,7 @@ const JohariWindow = ({ name, adjectives, minAdj, maxAdj, onSubmit }) => {
   const [alert, setAlert] = useState({ open: false, message: "", severity: null})
 
   useEffect(() => {
-    setProgress((selectedAdjectives.length / minAdj) * 100); 
+    setProgress((selectedAdjectives.length / minSelfAdj) * 100); 
   }, [selectedAdjectives]);
 
   //initialize the selectedAdjectives base on the selfAssessment
@@ -42,10 +42,10 @@ const JohariWindow = ({ name, adjectives, minAdj, maxAdj, onSubmit }) => {
     setSelectedAdjectives(prev => {
       if (prev.includes(adjective)) {
         return prev.filter(a => a !== adjective);
-      } else if (maxAdj && prev.length < maxAdj) {
+      } else if (maxSelfAdj == undefined || prev.length < maxSelfAdj) {
         return [...prev, adjective];
       } else {
-        displayAlert(`Maximum allowed is ${maxAdj} adjectives. Please uncheck one to select a new adjective.`);
+        displayAlert(`Maximum allowed is ${maxSelfAdj} adjectives. Please uncheck one to select a new adjective.`);
         return prev;
       }
     });
@@ -53,8 +53,8 @@ const JohariWindow = ({ name, adjectives, minAdj, maxAdj, onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (selectedAdjectives.length < minAdj) { 
-      displayAlert(`Please select at least ${minAdj} adjectives.`);
+    if (selectedAdjectives.length < minSelfAdj) { 
+      displayAlert(`Please select at least ${minSelfAdj} adjectives.`);
       return;
     }
     try {
@@ -97,10 +97,10 @@ const JohariWindow = ({ name, adjectives, minAdj, maxAdj, onSubmit }) => {
     <div className="container">
       <div>
       {
-        (maxAdj)? (
-          <h2>請選出{minAdj}-{maxAdj}個你自己的特質</h2>
+        (maxSelfAdj)? (
+          <h2>請選出{minSelfAdj}-{maxSelfAdj}個你自己的特質</h2>
         ):(
-          <h2>請選出最少{minAdj}個你自己的特質</h2>
+          <h2>請選出最少{minSelfAdj}個你自己的特質</h2>
         )
       }
       </div>
@@ -129,7 +129,7 @@ const JohariWindow = ({ name, adjectives, minAdj, maxAdj, onSubmit }) => {
         <button 
           className="btn submit-btn" 
           type="submit" 
-          disabled={selectedAdjectives.length < minAdj}
+          disabled={selectedAdjectives.length < minSelfAdj}
         >
           Submit
         </button>
