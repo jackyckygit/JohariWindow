@@ -52,16 +52,32 @@ const JohariResults = ({ name, adjectives }) => {
     return counts;
   }
 
+  /**
+   * combine repeated items in array
+   * @param {*} list with some reducdant items
+   * @returns 
+   */
+  const reduceAdj = (list) => {
+    let combined = list.reduce((acc, curr)=>{
+      if (acc[curr] == null){
+        acc[curr] = 1;
+      }
+      else {
+        acc[curr]+=1;
+      }
+      return acc;
+    }, {} )
+    return Object.entries(combined).map(([k, v])=>(v==1)?k:`${k}x${v}`)
+  }
+
   const calculateJohariWindow = () => {
     const peerAdjectives = peerAssessments.flatMap(assessment => assessment.adjectives);
     const peerAdjectivesSet = new Set(peerAdjectives);
     const selfAdjectivesSet = new Set(selfAdjectives);
     const blindSpotRep = peerAdjectives.filter(adj => !selfAdjectivesSet.has(adj));
-    const blindSpotRepSet = new Set(blindSpotRep);
-    const blindSpotCount = setCounts([...blindSpotRep])
 
-    const arena = selfAdjectives.filter(adj => peerAdjectivesSet.has(adj));
-    const blindSpot = [...blindSpotRepSet].map(b=>(blindSpotCount[b]>1)?`${b}x${blindSpotCount[b]}` : b)
+    const arena = reduceAdj(peerAdjectives.filter(p=>selfAdjectivesSet.has(p)));
+    const blindSpot = reduceAdj(blindSpotRep);
     const facade = selfAdjectives.filter(adj => !peerAdjectivesSet.has(adj));
     const unknown = adjectives.filter(adj => !selfAdjectivesSet.has(adj) && !peerAdjectivesSet.has(adj));
 
@@ -89,7 +105,6 @@ const JohariResults = ({ name, adjectives }) => {
     }
   };
 
-  //TODO allow multiple display
   const renderAdjectiveList = (_adjectives) => {
     return (
       <div className="adjective-list">
