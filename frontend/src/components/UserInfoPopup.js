@@ -20,18 +20,14 @@ const UserInfoPopup = ({ onSubmit }) => {
         <input
           type="text"
           value={name}
+          name="name"
           onChange={(e) => setName(e.target.value)}
           placeholder="名稱"
         />
-        {/* <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email, for sending report"
-        /> */}
         <input
           type="text"
           value={group}
+          name="group"
           onChange={(e) => setGroup(e.target.value)}
           placeholder="組名"
         />
