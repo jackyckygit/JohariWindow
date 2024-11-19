@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user.model');
 const fs = require('fs');
+const GAL = require('google-auth-library')
+const GS = require('google-spreadsheet');
+
 
 const readFileLineByLine = function(filePath) {
   const lines = [];
@@ -51,8 +54,51 @@ const doGetConfigFromLocal = function(){
   })
 }
 
+const doGetConfigFromGS = function(){
+  return new Promise(async(resolve, reject)=>{
+    const SCOPES = [
+      'https://www.googleapis.com/auth/spreadsheets',
+      'https://www.googleapis.com/auth/drive.file',
+    ];
+
+    const jwtFromEnv = new GAL.JWT({
+      email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      key: process.env.GOOGLE_PRIVATE_KEY,
+      scopes: SCOPES,
+    });
+
+    const doc = new GS.GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID, jwtFromEnv);
+    try {
+      await doc.loadInfo(); // loads document properties and worksheets
+
+      const sheet = doc.sheetsByTitle["config"];
+      const rows = await sheet.getRows();   
+      let adjectives = rows.map(r=>r.get('adjectives'))
+      return resolve({
+        success: true,
+        data: {
+          adjectives,
+          minPeerAdj:  rows[0].get('MIN_NUM_OF_PEER_ADJ'), 
+          maxPeerAdj:  rows[0].get('MAX_NUM_OF_PEER_ADJ'),
+          minSelfAdj:  rows[0].get('MIN_NUM_OF_SELF_ADJ'), 
+          maxSelfAdj:  rows[0].get('MAX_NUM_OF_SELF_ADJ'),
+        }
+      });
+
+    } catch (error) {
+      console.error('unable to load the adjectives:', error);
+      reject({ success: false, message: error})
+    }
+  }
+)}
+
 const doGetConfig = function(){
-  return doGetConfigFromLocal()
+  if (process.env.CONFIG_SOURCE==='GS'){
+    return doGetConfigFromGS()
+  }
+  else {
+    return doGetConfigFromLocal()
+  }
 }
 
 
