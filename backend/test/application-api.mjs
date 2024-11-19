@@ -17,9 +17,8 @@ describe('Testing api', () => {
   describe('testing config api', () => {
     it('get config', (done) => {
       TH.sendGETRequest(`/jw-api/johari/config`).then((_data)=>{
-        // console.log(`data return for createTodo: ${data}`)
+        // console.log(`/jw-api/johari/config returned data: ${_data}`)
         let data = JSON.parse(_data)
-        console.log(data)
         expect(data).to.have.property("data")
         expect(data.data).to.have.property("adjectives")
         expect(data.data.adjectives).to.be.an('array').that.is.not.empty;
