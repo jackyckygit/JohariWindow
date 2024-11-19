@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user.model');
-const nodemailer = require('nodemailer');
 const fs = require('fs');
 
-function readFileLineByLine(filePath) {
+const readFileLineByLine = function(filePath) {
   const lines = [];
   const fileStream = fs.createReadStream(filePath, { encoding: 'utf-8' });
 
@@ -22,6 +21,40 @@ function readFileLineByLine(filePath) {
     });
   });
 }
+
+const doGetConfigFromLocal = function(){
+  return new Promise(async(resolve, reject)=>{
+    // get from local
+    try {
+      const MIN_NUM_OF_PEER_ADJ = process.env.MIN_NUM_OF_PEER_ADJ;
+      const MAX_NUM_OF_PEER_ADJ = process.env.MAX_NUM_OF_PEER_ADJ;
+      const MIN_NUM_OF_SELF_ADJ = process.env.MIN_NUM_OF_SELF_ADJ;
+      const MAX_NUM_OF_SELF_ADJ = process.env.MAX_NUM_OF_SELF_ADJ;
+      const lines = await readFileLineByLine(process.env.ADJ_FILE);
+      if (!lines) {
+        return reject({ success: false, message: 'Adjectives not found' });
+      }
+      return resolve({
+        success: true,
+        data: {
+          adjectives: lines,
+          minPeerAdj:  MIN_NUM_OF_PEER_ADJ, 
+          maxPeerAdj:  MAX_NUM_OF_PEER_ADJ,
+          minSelfAdj:  MIN_NUM_OF_SELF_ADJ, 
+          maxSelfAdj:  MAX_NUM_OF_SELF_ADJ,
+        }
+      });
+    } catch (err) {
+      console.error('unable to load the adjectives:', err);
+      return reject({ success: false, message: 'Error fetching Johari Window adjectives: ' + err.message });
+    }
+  })
+}
+
+const doGetConfig = function(){
+  return doGetConfigFromLocal()
+}
+
 
 /**
  *  saveUserInfo
@@ -239,31 +272,12 @@ router.get('/window/:userName', async (req, res) => {
 //   }
 // });
 
-router.get('/config', async (req, res) => {
-  try {
-    const MIN_NUM_OF_PEER_ADJ = process.env.MIN_NUM_OF_PEER_ADJ;
-    const MAX_NUM_OF_PEER_ADJ = process.env.MAX_NUM_OF_PEER_ADJ;
-    const MIN_NUM_OF_SELF_ADJ = process.env.MIN_NUM_OF_SELF_ADJ;
-    const MAX_NUM_OF_SELF_ADJ = process.env.MAX_NUM_OF_SELF_ADJ;
-    const lines = await readFileLineByLine(process.env.ADJ_FILE);
-    if (!lines) {
-      return res.status(404).json({ success: false, message: 'Adjectives not found' });
-    }
-    res.json({
-      success: true,
-      data: {
-        adjectives: lines,
-        minPeerAdj:  MIN_NUM_OF_PEER_ADJ, 
-        maxPeerAdj:  MAX_NUM_OF_PEER_ADJ,
-        minSelfAdj:  MIN_NUM_OF_SELF_ADJ, 
-        maxSelfAdj:  MAX_NUM_OF_SELF_ADJ,
-      }
-    });
-  } catch (err) {
-    console.error('unable to load the adjectives:', err);
-    res.status(500).json({ success: false, message: 'Error fetching Johari Window adjectives: ' + err.message });
-  }
+router.get('/config', (req, res) => {
+  doGetConfig()
+    .then(result=>{
+      res.json(result)
+    })
+    .catch(err=>res.status(500).json(err))
 });
-
 
 module.exports = router;
