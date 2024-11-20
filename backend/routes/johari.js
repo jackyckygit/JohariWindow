@@ -142,7 +142,6 @@ router.get('/users', async (req, res) => {
       ...((req.query.group!=null) && { group: req.query.group }),
     }
     const users = await User.find(query);
-    // console.log(`users222: ${JSON.stringify(users)}`)    
     res.json({
       success: true,
       data: users

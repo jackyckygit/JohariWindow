@@ -31,7 +31,6 @@ describe('Testing api', () => {
     //update
     it.skip('update adjectives', (done) => {
       TH.sendPOSTRequest(`/jw-api/johari/adjectives`, null, userAccessToken).then((data)=>{
-        // console.log(`data return for createTodo: ${data}`)
         done()
       }).catch((err)=>{
         done(err)
