@@ -27,16 +27,6 @@ describe('Testing api', () => {
         done(err)
       })
     });
-
-    //update
-    it.skip('update adjectives', (done) => {
-      TH.sendPOSTRequest(`/jw-api/johari/adjectives`, null, userAccessToken).then((data)=>{
-        done()
-      }).catch((err)=>{
-        done(err)
-      })
-    });
-
   });
 
   describe('testing userinfo', () => {
@@ -57,6 +47,21 @@ describe('Testing api', () => {
 
     it('get user by name', (done) => {
       TH.sendGETRequest(`/jw-api/johari/users`, { userName: userA.userName }).then((_data)=>{
+        // console.log(`data return for get user: ${_data}`)
+        let data = JSON.parse(_data).data
+        expect(data).to.be.an('array').of.length(1);
+        let user = data[0]
+        expect(user).to.have.property('name', userA.userName);
+        expect(user).to.have.property('email', userA.email);
+        expect(user).to.have.property('group', userA.group);
+        done()
+      }).catch((err)=>{
+        done(err)
+      })
+    });
+
+    it('get user by name with peerAssementFromSameGroup set to true', (done) => {
+      TH.sendGETRequest(`/jw-api/johari/users?userName=${userA.userName}&peerAssementFromSameGroup=true`, null).then((_data)=>{
         // console.log(`data return for get user: ${_data}`)
         let data = JSON.parse(_data).data
         expect(data).to.be.an('array').of.length(1);

@@ -134,6 +134,11 @@ router.post('/saveUserInfo', async (req, res) => {
   }
 });
 
+/**
+ * query: 
+ *  userName, email, group: filter for the user
+ *  peerAssementFromSameGroup: true - check whether the peer assessment is coming from user in the same group
+ */
 router.get('/users', async (req, res) => {
   try {
     const query = {
@@ -141,7 +146,16 @@ router.get('/users', async (req, res) => {
       ...((req.query.email!=null) && { email: req.query.email }),
       ...((req.query.group!=null) && { group: req.query.group }),
     }
-    const users = await User.find(query);
+    let peerAssementFromSameGroup = req.query.peerAssementFromSameGroup
+    let users = await User.find(query);
+    
+    // filter out peer assessment is coming from user in the same group
+    if ((peerAssementFromSameGroup == true || peerAssementFromSameGroup == 'true') && req.query.userName != null){
+      let sameGroupUsers = await User.find({
+        group: users[0].group
+      })
+      users[0].peerAssessments = users[0].peerAssessments.filter(pa => sameGroupUsers.find(sgu=>sgu.name==pa.peerName)!=null)
+    }
     res.json({
       success: true,
       data: users
@@ -296,26 +310,6 @@ router.get('/window/:userName', async (req, res) => {
     res.status(500).json({ success: false, message: 'Error fetching Johari Window data: ' + err.message });
   }
 });
-
-// TODO put update the adjectives
-
-// get the adjectives list TODO change to get config
-// router.get('/adjectives', async (req, res) => {
-//   try {
- 
-//     let lines = await readFileLineByLine(process.env.ADJ_FILE);
-//     if (!lines) {
-//       return res.status(404).json({ success: false, message: 'Adjectives not found' });
-//     }
-//     res.json({
-//       success: true,
-//       data: lines
-//     });
-//   } catch (err) {
-//     console.error('unable to load the adjectives:', err);
-//     res.status(500).json({ success: false, message: 'Error fetching Johari Window adjectives: ' + err.message });
-//   }
-// });
 
 router.get('/config', (req, res) => {
   doGetConfig()

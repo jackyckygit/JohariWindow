@@ -26,7 +26,7 @@ const JohariResults = ({ name, adjectives }) => {
   }, []);
 
   const updateAssessments = async()=>{
-    axios.get(`/jw-api/johari/users?userName=${name}`).then((res)=>{
+    axios.get(`/jw-api/johari/users?userName=${name}&peerAssementFromSameGroup=true`).then((res)=>{
       let user = res.data.data[0]
       console.log(user)
       // let peers = userList.filter(v=>v.name != name)
