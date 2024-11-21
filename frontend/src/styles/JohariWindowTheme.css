@@ -90,7 +90,7 @@ h1, h2, h3 {
 
 .adjective-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(8, 1fr);
   gap: 10px;
   margin-bottom: 20px;
 }
@@ -201,9 +201,15 @@ h1, h2, h3 {
   background-color: #6fa500;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
   .container {
     width: 95%;
+  }
+}
+
+@media (max-width: 768px) {
+  .adjective-grid {
+    grid-template-columns: repeat(5, 1fr);
   }
   
   .peer-info {
