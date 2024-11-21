@@ -31,8 +31,8 @@ describe('Testing api', () => {
 
   describe('testing userinfo', () => {
     let userA = {
-      userName: "TestUserA",
-      email: "TestUserA@test.com",
+      userName: "TestUserTA",
+      email: "TestUserTA@test.com",
       group: "TestGroupA"
     }
 
@@ -76,7 +76,7 @@ describe('Testing api', () => {
     });
 
     it('update user email', (done) => {
-      userA.email = "ChangedTestUserA@test.com",
+      userA.email = "ChangedTestUserTA@test.com",
       TH.sendPOSTRequest(`/jw-api/johari/saveUserInfo`, userA, null).then((data)=>{
         // console.log(`data return for saveUserInfo: ${data}`)
         done()
@@ -103,8 +103,7 @@ describe('Testing api', () => {
     it('update user peer assessemnt', (done) => {
       let peerAssessment =  {
         userName: 'TestUserB',
-        peerName: 'TestUserA',
-        group: 'A',
+        peerName: 'TestUserTA',
         peerEmail: '',
         adjectives: [ 'A', 'B', 'C', 'G', 'D' ]
       }

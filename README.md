@@ -1,10 +1,10 @@
 # JohariWindow
 
 # Building
-docker build --build-arg PUBLIC_URL="/jw" -t johari_wndow:0.2 .
+docker build --build-arg PUBLIC_URL="/jw" -t johari_wndow:0.3 .
 
 # Running
-docker run -d --net=host --name johari-window --restart=always johari_wndow:0.2 npm start
+docker run -d --net=host --name johari-window --restart=always johari_wndow:0.3 npm start
 
 # special case handling
 issue with changing group
