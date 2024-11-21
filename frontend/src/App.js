@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './styles/GreatLakesTheme.css';
+import './styles/JohariWindowTheme.css';
 import JohariWindow from './components/JohariWindow';
 import PeerAssessment from './components/PeerAssessment';
 import JohariResults from './components/JohariResults';

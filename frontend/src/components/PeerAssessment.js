@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Snackbar, IconButton } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import '../styles/GreatLakesTheme.css';
+import '../styles/JohariWindowTheme.css';
 
 const PeerAssessment = ({ name, minPeerAdj, maxPeerAdj , group, adjectives, onSubmit, userName, onNavigate }) => {
   const [selectedAdjectives, setSelectedAdjectives] = useState([]);

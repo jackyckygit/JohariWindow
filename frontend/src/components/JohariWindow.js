@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Snackbar } from '@mui/material';
 import Alert from '@mui/material/Alert';
-import '../styles/GreatLakesTheme.css';
+import '../styles/JohariWindowTheme.css';
 
 const JohariWindow = ({ name, adjectives, minSelfAdj, maxSelfAdj, onSubmit }) => {
   const [selectedAdjectives, setSelectedAdjectives] = useState([]); 

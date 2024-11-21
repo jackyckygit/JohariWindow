@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../styles/GreatLakesTheme.css';
+import '../styles/JohariWindowTheme.css';
 import { IconButton } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
