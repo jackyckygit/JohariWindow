@@ -47,6 +47,21 @@ export default {
             });
         })
     },
+    sendDELRequest: function(pathname, params = {}, access_token) {
+        return new Promise((resolve, reject)=>{
+            request.execute(app)
+            .delete(pathname)
+            .query(params)
+            .set('Authorization', `Bearer ${access_token}`)
+            .end((err, res) => {
+                // console.log(`sendDELRequest res ${JSON.stringify(res)}`)
+                // console.log(`sendDELRequest err ${err}`)
+                expect(err).to.be.null; // Check for errors
+                expect(res).to.have.status(200); // Check for successful status code (200)
+                resolve(res.text);
+            });
+        })
+    },
     start: function() {
         return new Promise((resolve, reject) => {
             if (!started) {

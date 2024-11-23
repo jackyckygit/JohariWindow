@@ -1,106 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/user.model');
-const fs = require('fs');
-const GAL = require('google-auth-library')
-const GS = require('google-spreadsheet');
-
-
-const readFileLineByLine = function(filePath) {
-  const lines = [];
-  const fileStream = fs.createReadStream(filePath, { encoding: 'utf-8' });
-
-  return new Promise((resolve, reject) => {
-    fileStream.on('data', (chunk) => {
-      lines.push(...chunk.split('\n'));
-    });
-
-    fileStream.on('end', () => {
-      resolve(lines);
-    });
-
-    fileStream.on('error', (err) => {
-      reject(err);
-    });
-  });
-}
-
-const doGetConfigFromLocal = function(){
-  return new Promise(async(resolve, reject)=>{
-    // get from local
-    try {
-      const MIN_NUM_OF_PEER_ADJ = process.env.MIN_NUM_OF_PEER_ADJ;
-      const MAX_NUM_OF_PEER_ADJ = process.env.MAX_NUM_OF_PEER_ADJ;
-      const MIN_NUM_OF_SELF_ADJ = process.env.MIN_NUM_OF_SELF_ADJ;
-      const MAX_NUM_OF_SELF_ADJ = process.env.MAX_NUM_OF_SELF_ADJ;
-      const lines = await readFileLineByLine(process.env.ADJ_FILE);
-      if (!lines) {
-        return reject({ success: false, message: 'Adjectives not found' });
-      }
-      return resolve({
-        success: true,
-        data: {
-          adjectives: lines,
-          minPeerAdj:  MIN_NUM_OF_PEER_ADJ, 
-          maxPeerAdj:  MAX_NUM_OF_PEER_ADJ,
-          minSelfAdj:  MIN_NUM_OF_SELF_ADJ, 
-          maxSelfAdj:  MAX_NUM_OF_SELF_ADJ,
-        }
-      });
-    } catch (err) {
-      console.error('unable to load the adjectives:', err);
-      return reject({ success: false, message: 'Error fetching Johari Window adjectives: ' + err.message });
-    }
-  })
-}
-
-const doGetConfigFromGS = function(){
-  return new Promise(async(resolve, reject)=>{
-    const SCOPES = [
-      'https://www.googleapis.com/auth/spreadsheets',
-      'https://www.googleapis.com/auth/drive.file',
-    ];
-
-    const jwtFromEnv = new GAL.JWT({
-      email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      key: process.env.GOOGLE_PRIVATE_KEY,
-      scopes: SCOPES,
-    });
-
-    const doc = new GS.GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID, jwtFromEnv);
-    try {
-      await doc.loadInfo(); // loads document properties and worksheets
-
-      const sheet = doc.sheetsByTitle["config"];
-      const rows = await sheet.getRows();   
-      let adjectives = rows.map(r=>r.get('adjectives'))
-      return resolve({
-        success: true,
-        data: {
-          adjectives,
-          minPeerAdj:  rows[0].get('MIN_NUM_OF_PEER_ADJ'), 
-          maxPeerAdj:  rows[0].get('MAX_NUM_OF_PEER_ADJ'),
-          minSelfAdj:  rows[0].get('MIN_NUM_OF_SELF_ADJ'), 
-          maxSelfAdj:  rows[0].get('MAX_NUM_OF_SELF_ADJ'),
-        }
-      });
-
-    } catch (error) {
-      console.error('unable to load the adjectives:', error);
-      reject({ success: false, message: error})
-    }
-  }
-)}
-
-const doGetConfig = function(){
-  if (process.env.CONFIG_SOURCE==='GS'){
-    return doGetConfigFromGS()
-  }
-  else {
-    return doGetConfigFromLocal()
-  }
-}
-
+const Config = require('../managers/config_manager');
+const UserManager = require('../managers/user_manager')
 
 /**
  *  saveUserInfo
@@ -120,12 +21,7 @@ router.post('/saveUserInfo', async (req, res) => {
   }
 
   try {
-    let user = await User.findOneAndUpdate(
-      { name: userName }, 
-      { $set: { group: group, email, email }}, 
-      { new: true, upsert: true }
-    );
-
+    let user = await UserManager.updateUserInfo({ userName, group, email })
     console.log(`user saved successfully: ${user}`)
     res.json({ success: true, message: 'User saved successfully' });
   } catch (err) {
@@ -141,21 +37,12 @@ router.post('/saveUserInfo', async (req, res) => {
  */
 router.get('/users', async (req, res) => {
   try {
-    const query = {
-      ...((req.query.userName!=null) && { name: req.query.userName }),
-      ...((req.query.email!=null) && { email: req.query.email }),
-      ...((req.query.group!=null) && { group: req.query.group }),
-    }
-    let peerAssementFromSameGroup = req.query.peerAssementFromSameGroup
-    let users = await User.find(query);
-    
-    // filter out peer assessment is coming from user in the same group
-    if ((peerAssementFromSameGroup == true || peerAssementFromSameGroup == 'true') && req.query.userName != null){
-      let sameGroupUsers = await User.find({
-        group: users[0].group
-      })
-      users[0].peerAssessments = users[0].peerAssessments.filter(pa => sameGroupUsers.find(sgu=>sgu.name==pa.peerName)!=null)
-    }
+    let users = await UserManager.getUsers({
+      name: req.query.userName,
+      email: req.query.email,
+      group: req.query.group,
+      peerAssementFromSameGroup: req.query.peerAssementFromSameGroup
+    })
     res.json({
       success: true,
       data: users
@@ -163,6 +50,29 @@ router.get('/users', async (req, res) => {
   } catch (err) {
     console.error('Error fetching users:', err);
     res.status(500).json({ success: false, message: 'Error fetching users: ' + err.message });
+  }
+});
+
+router.delete('/user', async (req, res) => {
+  const { userName } = req.query;
+
+  if (userName == null || userName.trim()==''){
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Invalid user information' 
+    });
+  }
+
+  try {
+    await UserManager.delUser({
+      name: req.query.userName,
+    })
+    res.json({
+      success: true,
+    });
+  } catch (err) {
+    console.error('Error deleting users:', err);
+    res.status(500).json({ success: false, message: 'Error deleting users: ' + err.message });
   }
 });
 
@@ -201,12 +111,9 @@ router.post('/submit-self', async (req, res) => {
   }
 
   try {
-    // find an existing one and update
-    let user = await User.findOneAndUpdate(
-      { name: userName }, 
-      { $set: { selfAssessment: adjectives }}, 
-      { new: true, upsert: false }
-    );
+    let user = UserManager.updateUserSelfAssessment({
+      name: userName, selfAssessment: adjectives
+    })
 
     if (user!=null && !user) {
       return res.status(400).json({ 
@@ -224,10 +131,14 @@ router.post('/submit-self', async (req, res) => {
 });
 
 // Peer assessment submission route
+// userName, the submitter
+// peerName, the peer assessted by submitter
+// group,
+// adjectives: selectedAdjectives
 router.post('/submit-peer', async (req, res) => {
-  const { userName, peerName, group, peerEmail, adjectives } = req.body;
+  const { userName, peerName, group, adjectives } = req.body;
   
-  console.log('Received peer assessment:', { userName, peerName, group, peerEmail, adjectives });
+  console.log('Received peer assessment:', { userName, peerName, group, adjectives });
   let not_defined_max = process.env.MAX_NUM_OF_PEER_ADJ == null || process.env.MAX_NUM_OF_PEER_ADJ == ''
 
   if (!userName || !peerName || !Array.isArray(adjectives) || adjectives.length < process.env.MIN_NUM_OF_PEER_ADJ || (!not_defined_max && adjectives.length > process.env.MAX_NUM_OF_PEER_ADJ)) {
@@ -245,15 +156,10 @@ router.post('/submit-peer', async (req, res) => {
     });
   }
 
-  // userName, the submitter
-  // peerName, the peer assessted by submitter
-  // group,
-  // peerEmail, the email of the peer, not used
-  // adjectives: selectedAdjectives
-
   try {
     // find an existing one and update
-    let user = await User.findOne({ name: peerName });
+    let users = await UserManager.getUsers({ name: peerName });
+    let user = users[0];
 
     if (user!=null && !user) {
       return res.status(400).json({ 
@@ -277,11 +183,7 @@ router.post('/submit-peer', async (req, res) => {
       updatePeerAssessments.push(newPeerAssessments)
     }
 
-    user = await User.findOneAndUpdate(
-      { name: peerName }, 
-      { $set: { peerAssessments: updatePeerAssessments }}, 
-      { new: true, upsert: false }
-    );
+    user = await UserManager.updateUserPeerAssessments({ name: peerName, peerAssessments: updatePeerAssessments })
     console.log(`return user: ${user}`)    
     console.log('Peer assessment saved successfully');
     res.json({ success: true, message: 'Peer assessment submitted successfully' });
@@ -291,28 +193,8 @@ router.post('/submit-peer', async (req, res) => {
   }
 });
 
-// Get Johari Window data
-router.get('/window/:userName', async (req, res) => {
-  try {
-    const user = await User.findOne({ name: req.params.userName });
-    if (user!=null && !user) {
-      return res.status(404).json({ success: false, message: 'User not found' });
-    }
-    res.json({
-      success: true,
-      data: {
-        selfAssessment: user.selfAssessment,
-        peerAssessments: user.peerAssessments
-      }
-    });
-  } catch (err) {
-    console.error('Error fetching Johari Window data:', err);
-    res.status(500).json({ success: false, message: 'Error fetching Johari Window data: ' + err.message });
-  }
-});
-
 router.get('/config', (req, res) => {
-  doGetConfig()
+  Config.getConfig()
     .then(result=>{
       res.json(result)
     })
