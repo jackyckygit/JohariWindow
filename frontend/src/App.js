@@ -6,13 +6,11 @@ import PeerAssessment from './components/PeerAssessment';
 import JohariResults from './components/JohariResults';
 import LoadingScreen from './components/LoadingScreen';
 import UserInfoPopup from './components/UserInfoPopup';
-import JohariWindowLogo from './images/logo192.png';
-
+import JohariWindowLogo from './images/logo.png';
 
 function App() {
   const [stage, setStage] = useState('userInfo');
   const [name, setName] = useState(''); // This is now the userName
-  // const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [group, setGroup] = useState('');
   const [adjectives, setAdjectives] = useState([]);
@@ -48,12 +46,10 @@ function App() {
       const response = await axios.post('/jw-api/johari/saveUserInfo', {
         userName: userInfo.name,
         group: userInfo.group,
-        // email: userInfo.email
       });
       
       if (response.data.success) {
         setName(userInfo.name); // Setting the userName
-        // setEmail(userInfo.email);
         setPhone(userInfo.phone);
         setGroup(userInfo.group);
         setStage('selfAssessment');
@@ -74,34 +70,16 @@ function App() {
 
   const handleSelfAssessmentSubmit = (adjectives) => {
     setSelfAdjectives(adjectives);
-    // setStage('peerAssessment');
   };
 
   const handlePeerAssessmentSubmit = (peerAssessment) => {
     setPeerAssessments([...peerAssessments, peerAssessment]);
-    // setStage('results'); don't change to display result
   };
 
   const handleNavigate = (path) => {
     // This function can be expanded to handle different navigation paths
     if (path === '/johari-window') {
       setStage('results');
-    }
-  };
-
-  const handleDownloadReport = async (userInfo) => {
-    try {
-      await axios.post('/jw-api/johari/send-report', { 
-        ...userInfo, 
-        johariData: { 
-          selfAdjectives, 
-          peerAssessments 
-        } 
-      });
-      alert('Report has been sent to your email.');
-    } catch (error) {
-      console.error('Error sending report:', error);
-      alert('Failed to send report. Please try again.');
     }
   };
 
@@ -151,7 +129,6 @@ function App() {
           <JohariWindow 
             onSubmit={handleSelfAssessmentSubmit} 
             name={name} 
-            // email={email} 
             phone={phone} 
             adjectives={adjectives}
             minSelfAdj={minSelfAdj}
@@ -163,7 +140,6 @@ function App() {
             onSubmit={handlePeerAssessmentSubmit}
             userName={name} // Passing userName as a prop
             name={name} 
-            // email={email} 
             group={group}
             adjectives={adjectives}
             minPeerAdj={minPeerAdj}
@@ -175,22 +151,11 @@ function App() {
           <>
             <JohariResults 
               name={name} 
-              // email={email} 
               adjectives={adjectives}
               selfAdjectives={selfAdjectives} 
               peerAssessments={peerAssessments}
             />
-            {/* <button onClick={() => setStage('downloadReport')} className="btn">
-              Download Full Report
-            </button> */}
           </>
-        )}
-        {stage === 'downloadReport' && (
-          <UserInfoPopup 
-            onSubmit={handleDownloadReport}
-            title="Enter your details to receive the report"
-            submitButtonText="Send Report"
-          />
         )}
       </main>
     </div>

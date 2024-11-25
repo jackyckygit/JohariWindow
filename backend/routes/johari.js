@@ -10,9 +10,8 @@ const UserManager = require('../managers/user_manager')
 router.post('/saveUserInfo', async (req, res) => {
   const { userName, group, email } = req.body;
 
-  if (userName == null || userName.replace(/ /g, '')==''
-    || group == null || group.replace(/ /g, '')==''
-    // || email == null || email.replace(/ /g, '')==''  
+  if (userName == null || userName.trim()==''
+    || group == null || group.trim()==''
   ){
     return res.status(400).json({ 
       success: false, 

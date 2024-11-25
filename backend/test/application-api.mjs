@@ -7,17 +7,9 @@ const expect = chai.expect;
 import TH from './common/test-helper.mjs';
 
 describe('Testing api', () => {
-  before((done)=>{
-    TH.start().then(function() {
-      done();
-    })
-    .catch((err)=>{done(err)});
-  })
-  
   describe('testing config api', () => {
     it('get config', (done) => {
       TH.sendGETRequest(`/jw-api/johari/config`).then((_data)=>{
-        // console.log(`/jw-api/johari/config returned data: ${_data}`)
         let data = JSON.parse(_data)
         expect(data).to.have.property("data")
         expect(data.data).to.have.property("adjectives")
@@ -42,7 +34,6 @@ describe('Testing api', () => {
 
     it('create user A with normal info', (done) => {
       TH.sendPOSTRequest(`/jw-api/johari/saveUserInfo`, userA, null).then((data)=>{
-        // console.log(`data return for saveUserInfo: ${data}`)
         done()
       }).catch((err)=>{
         done(err)
@@ -51,7 +42,6 @@ describe('Testing api', () => {
 
     it('create user B with normal info', (done) => {
       TH.sendPOSTRequest(`/jw-api/johari/saveUserInfo`, userB, null).then((data)=>{
-        // console.log(`data return for saveUserInfo: ${data}`)
         done()
       }).catch((err)=>{
         done(err)
@@ -60,7 +50,6 @@ describe('Testing api', () => {
 
     it('get user by name', (done) => {
       TH.sendGETRequest(`/jw-api/johari/users`, { userName: userA.userName }).then((_data)=>{
-        // console.log(`data return for get user: ${_data}`)
         let data = JSON.parse(_data).data
         expect(data).to.be.an('array').of.length(1);
         let user = data[0]
@@ -74,7 +63,6 @@ describe('Testing api', () => {
 
     it('get user by name with peerAssementFromSameGroup set to true', (done) => {
       TH.sendGETRequest(`/jw-api/johari/users?userName=${userA.userName}&peerAssementFromSameGroup=true`, null).then((_data)=>{
-        // console.log(`data return for get user: ${_data}`)
         let data = JSON.parse(_data).data
         expect(data).to.be.an('array').of.length(1);
         let user = data[0]
@@ -88,7 +76,6 @@ describe('Testing api', () => {
 
     it('get user by name', (done) => {
       TH.sendGETRequest(`/jw-api/johari/users`, { userName: userA.userName }).then((_data)=>{
-        // console.log(`data return for get user: ${_data}`)
         let data = JSON.parse(_data).data
         expect(data).to.be.an('array').of.length(1);
         let user = data[0]
@@ -109,7 +96,6 @@ describe('Testing api', () => {
       }
 
       TH.sendPOSTRequest(`/jw-api/johari/submit-peer`, peerAssessment, null).then((data)=>{
-        // console.log(`data return for saveUserInfo: ${data}`)
         done()
       }).catch((err)=>{
         done(err)
@@ -118,7 +104,6 @@ describe('Testing api', () => {
 
     it('get user by name and check that there is peerAssessments from userB', (done) => {
       TH.sendGETRequest(`/jw-api/johari/users`, { userName: userA.userName }).then((_data)=>{
-        // console.log(`data return for get user: ${_data}`)
         let data = JSON.parse(_data).data
         expect(data).to.be.an('array').of.length(1);
         let user = data[0]
@@ -134,7 +119,6 @@ describe('Testing api', () => {
 
     it('delete user B', (done) => {
       TH.sendDELRequest(`/jw-api/johari/user`, { userName: userB.userName }).then((_data)=>{
-        // console.log(`data return for get user: ${_data}`)
         let success = JSON.parse(_data).success
         expect(success).to.equal(true);
         done()
@@ -145,7 +129,6 @@ describe('Testing api', () => {
 
     it('get userA and check that there is no peerAssessments from userB', (done) => {
       TH.sendGETRequest(`/jw-api/johari/users`, { userName: userA.userName }).then((_data)=>{
-        // console.log(`data return for get user: ${_data}`)
         let data = JSON.parse(_data).data
         expect(data).to.be.an('array').of.length(1);
         let user = data[0]
@@ -159,7 +142,6 @@ describe('Testing api', () => {
   
     it('delete user A', (done) => {
       TH.sendDELRequest(`/jw-api/johari/user`, { userName: userA.userName }).then((_data)=>{
-        // console.log(`data return for get user: ${_data}`)
         let success = JSON.parse(_data).success
         expect(success).to.equal(true);
         done()

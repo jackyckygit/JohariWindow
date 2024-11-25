@@ -16,7 +16,6 @@ const UserInfoPopup = ({ onSubmit }) => {
     <div className="user-info-popup">
       <form onSubmit={handleSubmit}>
         <h2>您好，請輸入以下資料</h2>
-        {/* ... (keep the explanation text) ... */}
         <input
           type="text"
           value={name}

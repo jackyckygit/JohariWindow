@@ -5,7 +5,7 @@ import Alert from '@mui/material/Alert';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import '../styles/JohariWindowTheme.css';
 
-const PeerAssessment = ({ name, minPeerAdj, maxPeerAdj , group, adjectives, onSubmit, userName, onNavigate }) => {
+const PeerAssessment = ({ name, minPeerAdj, maxPeerAdj , group, adjectives, onSubmit, userName }) => {
   const [selectedAdjectives, setSelectedAdjectives] = useState([]);
   const [progress, setProgress] = useState(0);
   const [peerName, setPeerName] = useState('');
@@ -25,7 +25,6 @@ const PeerAssessment = ({ name, minPeerAdj, maxPeerAdj , group, adjectives, onSu
     axios.get(`/jw-api/johari/users?group=${group}`).then((res)=>{
       let userList = res.data.data
       let peers = userList.filter(v=>v.name != name)
-      console.log(peers)
       setPeerList(peers)
     }).catch((err)=>{
       console.error('Error getting peers', err);
@@ -157,14 +156,6 @@ const PeerAssessment = ({ name, minPeerAdj, maxPeerAdj , group, adjectives, onSu
           </button>
         ))}
       </div>
-      {/* <div className="refresh-btn">
-        <button 
-          onClick={handleRefreshPeer} 
-          className="refresh-peer-btn"
-        >
-          刷新友伴
-        </button>
-      </div> */}
       {
         peerName && <div>
         {

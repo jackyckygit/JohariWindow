@@ -19,7 +19,6 @@ const johariRoutes = require('./routes/johari');
 app.use('/jw-api/johari', johariRoutes);
 
 // serving the static build from frontend
-// app.use(express.static('build')); 
 app.use('/jw', express.static('build'))
 
 module.exports = app;

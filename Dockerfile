@@ -22,10 +22,7 @@ WORKDIR /jw-server/backend
 RUN yarn install && yarn cache clean && npm uninstall -g yarn && npm cache clean --force
 
 
-# Set the timezone. it does not work for this debian image, (https://stackoverflow.com/questions/8671308/non-interactive-method-for-dpkg-reconfigure-tzdata)
-#RUN echo "Asia/Hong_Kong" > /etc/timezone
-#RUN dpkg-reconfigure -f noninteractive tzdata
-#need to use this one
+# Set the timezone. 
 RUN ln -fs /usr/share/zoneinfo/Asia/Hong_Kong /etc/localtime
 RUN dpkg-reconfigure -f noninteractive tzdata
 

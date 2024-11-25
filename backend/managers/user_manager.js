@@ -4,7 +4,6 @@ const User = require('../models/user.model');
 
 /**
  * update the group and email of an user
- * @param {*} param0 
  * @returns 
  */
 const updateUserInfo = ({ userName, group, email })=>{
@@ -55,11 +54,8 @@ const updateUserPeerAssessments = ({ name, peerAssessments})=>{
 }
 
 /**
- * 
- * @param {userName, email, group, peerAssementFromSameGroup} 
  *  userName, email, group: filter for the user
  *  peerAssementFromSameGroup: true - check whether the peer assessment is coming from user in the same group 
- * @returns 
  */
 const getUsers = ({ name, email, group, peerAssementFromSameGroup })=>{
     return new Promise(async (resolve, reject)=>{

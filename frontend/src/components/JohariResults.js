@@ -16,7 +16,6 @@ const JohariResults = ({ name, adjectives }) => {
     unknown: []
   });
 
-    //TODO get the from user record
   useEffect(() => {
     calculateJohariWindow();
   }, [selfAdjectives, peerAssessments]);
@@ -28,9 +27,6 @@ const JohariResults = ({ name, adjectives }) => {
   const updateAssessments = async()=>{
     axios.get(`/jw-api/johari/users?userName=${name}&peerAssementFromSameGroup=true`).then((res)=>{
       let user = res.data.data[0]
-      console.log(user)
-      // let peers = userList.filter(v=>v.name != name)
-      // console.log(peers)
       setSelfAdjectives(user.selfAssessment)
       setPeerAssessments(user.peerAssessments)
     }).catch((err)=>{
@@ -41,16 +37,6 @@ const JohariResults = ({ name, adjectives }) => {
   const handleRefreshPeer = async () => {
     updateAssessments()
   };
-
-  const setCounts = (arr) => {
-    const counts = {};
-  
-    arr.forEach(item => {
-      counts[item] = (counts[item] || 0) + 1;
-    });
-
-    return counts;
-  }
 
   /**
    * combine repeated items in array
@@ -135,25 +121,24 @@ const JohariResults = ({ name, adjectives }) => {
           </div>
           <div className="johari-grid">
             <div className="johari-quadrant">
-              <h3>你知我知</h3>
+              <h3>開放我</h3>
               {renderAdjectiveList(johariData.arena)}
             </div>
             <div className="johari-quadrant">
-              <h3>自己唔知</h3>
+              <h3>盲目我</h3>
               {renderAdjectiveList(johariData.blindSpot)}
             </div>
             <div className="johari-quadrant">
-              <h3>你睇我唔到</h3>
+              <h3>隱藏我</h3>
               {renderAdjectiveList(johariData.facade)}
             </div>
             <div className="johari-quadrant">
-              <h3>與我何干</h3>
+              <h3>未知我</h3>
               {renderAdjectiveList(johariData.unknown)}
             </div>
           </div>
         </div>
       </div>
-      {/* <button onClick={() => setShowDownloadPopup(true)} className="download-report-btn">Download Full Report</button> */}
       {showDownloadPopup && (
         <div className="download-popup">
           <h3>Enter your details to receive the report</h3>

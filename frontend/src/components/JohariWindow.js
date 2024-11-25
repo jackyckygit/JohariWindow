@@ -6,7 +6,6 @@ import '../styles/JohariWindowTheme.css';
 
 const JohariWindow = ({ name, adjectives, minSelfAdj, maxSelfAdj, onSubmit }) => {
   const [selectedAdjectives, setSelectedAdjectives] = useState([]); 
-  // const [selfAssessment, setSelfAssessment] = useState([]);
 
   const [progress, setProgress] = useState(0);
   const [alert, setAlert] = useState({ open: false, message: "", severity: null})
@@ -19,7 +18,6 @@ const JohariWindow = ({ name, adjectives, minSelfAdj, maxSelfAdj, onSubmit }) =>
   useEffect(() => {
     axios.get(`/jw-api/johari/users?userName=${name}`).then((res)=>{
       let user = res.data.data[0]
-      let peerAssessments = user.peerAssessments;
       if (user.selfAssessment != null){
         setSelectedAdjectives(user.selfAssessment)
       }
