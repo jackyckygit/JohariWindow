@@ -20,13 +20,11 @@ The Johari Window is a psychological tool created by Joseph Luft and Harrington 
 The Johari Window can be used in various settings, such as personal development, team building, and therapy. By soliciting feedback from others and sharing information about yourself, you can expand the Open Area, leading to improved communication and stronger relationships.
 
 ### Visual Representation:
-           | Known to Self       | Unknown to Self
------------|---------------------|-----------------
-Known to   | Open Area           | Blind Area
-Others     | (Arena)             | (Blind Spot)
------------|---------------------|-----------------
-Unknown to | Hidden Area         | Unknown Area
-Others     | (Façade)            | (Unknown)
+
+|           | Known to Self       | Unknown to Self
+|-----------|---------------------|-----------------
+|Known to Others | Open Area (Arena)     | Blind Area (Blind Spot)
+|Unknown to Others| Hidden Area (Façade)         | Unknown Area (Unknown)
 
 The Johari Window is a powerful tool for fostering self-awareness, enhancing interpersonal communication, and building trust within teams. By actively engaging in the process of giving and receiving feedback, individuals and groups can achieve greater mutual understanding and collaboration.
 
@@ -34,52 +32,31 @@ This is a web application written in **React** and **Node.js**
 
 ## Environment variables
 ### Frontend
-```
------------|---------------------
-PUBLIC_URL | Refer to [Creat React App doc](https://create-react-app.dev/docs/advanced-configuration/) *optional*
------------|---------------------
-BUILD_PATH | Refer to [Creat React App doc](https://create-react-app.dev/docs/advanced-configuration/) *optional*
------------|---------------------
-WDS_SOCKET_PATH | Refer to [Creat React App doc](https://create-react-app.dev/docs/advanced-configuration/) *optional*
------------|---------------------
-WDS_SOCKET_PORT | Refer to [Creat React App doc](https://create-react-app.dev/docs/advanced-configuration/) *optional*
------------|---------------------
-```
+
+| Variables | Purpose
+|-----------|---------------------
+|PUBLIC_URL | Refer to [Creat React App doc](https://create-react-app.dev/docs/advanced-configuration/) *optional*
+|BUILD_PATH | Refer to [Creat React App doc](https://create-react-app.dev/docs/advanced-configuration/) *optional*
+|WDS_SOCKET_PATH | Refer to [Creat React App doc](https://create-react-app.dev/docs/advanced-configuration/) *optional*
+|WDS_SOCKET_PORT | Refer to [Creat React App doc](https://create-react-app.dev/docs/advanced-configuration/) *optional*
+
 
 ### Backend
-```
------------|---------------------
-MONGODB_URI | Location of the MongoDB
------------|---------------------
-MONGODB_DB_NAME | MongoDB database name
------------|---------------------
-CONFIG_SOURCE | Get the configuration from local or Google Sheet. Set it to "GS" if getting from Google Sheet.
------------|---------------------
-ADJ_FILE | The filename storing the adjectives.
-*when config from local* | 
------------|---------------------
-MIN_NUM_OF_SELF_ADJ | The minimum number of adjectives can be selected for self assessment.
-*when config from local* | 
------------|---------------------
-MAX_NUM_OF_SELF_ADJ | The maximum number of adjectives can be selected for self assessment.
-*when config from local* | 
------------|---------------------
-MIN_NUM_OF_PEER_ADJ | The minimum number of adjectives can be selected for peer assessment.
-*when config from local* | 
------------|---------------------
-MAX_NUM_OF_PEER_ADJ | The maximum number of adjectives can be selected for peer assessment.
-*when config from local* | 
------------|---------------------
-GOOGLE_SERVICE_ACCOUNT_EMAIL | client email for authentication 
-*when config from Google Sheet* | 
------------|---------------------
-GOOGLE_PRIVATE_KEY | private key for authentication
-*when config from Google Sheet* | 
------------|---------------------
-GOOGLE_SHEET_ID | Google Sheet id
-*when config from Google Sheet* | 
------------|---------------------
-```
+| Variables | Purpose
+|-----------|---------------------
+|MONGODB_URI | Location of the MongoDB
+|MONGODB_DB_NAME | MongoDB database name
+|CONFIG_SOURCE | Get the configuration from local or Google Sheet. Set it to "GS" if getting from Google Sheet.
+|ADJ_FILE | The filename storing the adjectives. *when config from local* 
+| MIN_NUM_OF_SELF_ADJ | The minimum number of adjectives can be selected for self assessment. *when config from local* 
+|MAX_NUM_OF_SELF_ADJ | The maximum number of adjectives can be selected for self assessment. *when config from local*  
+|MIN_NUM_OF_PEER_ADJ | The minimum number of adjectives can be selected for peer assessment. *when config from local* 
+|MAX_NUM_OF_PEER_ADJ | The maximum number of adjectives can be selected for peer assessment. *when config from local* 
+| GOOGLE_SERVICE_ACCOUNT_EMAIL | client email for authentication *when config from Google Sheet* 
+| GOOGLE_PRIVATE_KEY | private key for authentication *when config from Google Sheet* 
+| GOOGLE_SHEET_ID | Google Sheet id *when config from Google Sheet* 
+| 
+
 
 ## Building
 ```bash
